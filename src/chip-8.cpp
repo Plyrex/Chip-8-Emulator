@@ -40,7 +40,7 @@ class chip8{
         uint16_t opcode; //for opcodes (instructions)
 
         /*
-        Registers are labeled V0 - VF for te 16 registers available
+        Registers are labeled V0 - VF for the 16 registers available
         As they are 8-bit, they can hold values from 0x00 - 0xFF
         Register VF is used to hold flag values for instructions
         */
@@ -296,22 +296,74 @@ void chip8::OP_8xy3(){
 }
 
 //ADD Vx, Vy (set Vx= Vx + Vy, set VF as the carry if sum is larger that 8-bits)
-void chip8::OP_8xy4(){}
+void chip8::OP_8xy4(){
+    uint8_t Vx= (opcode & 0x0F00u) >> 8u;
+    uint8_t Vy= (opcode & 0x00F0u) >> 4u;
+    uint16_t sum= registers[Vx]+ registers[Vy];
+
+    if(sum> 255u){
+        registers[0xF]= 1;
+    }else{
+        registers[0xF]= 0;
+    }
+
+    registers[Vx]= sum & 0xFFu; //AND with 0xFFu to store the lowest 8 bits
+}
 
 //SUB Vx, Vy (set Vx= Vx - Vy, set VF to 1 if Vx > Vy)
-void chip8::OP_8xy5(){}
+void chip8::OP_8xy5(){
+    uint8_t Vx= (opcode & 0x0F00u) >> 8u;
+    uint8_t Vy= (opcode & 0x00F0u) >> 4u;
+    
+    if(registers[Vx]> registers[Vy]){
+        registers[0xF]= 1;
+    }else{
+        registers[0xF]= 0;
+    }
+
+    registers[Vx]-= registers[Vy];
+}
 
 //SHR Vx (set Vx = Vx SHR 1, right non-circular shift occurs and the least significant bit is stored in VF)
-void chip8::OP_8xy6(){}
+void chip8::OP_8xy6(){
+    uint8_t Vx= (opcode & 0x0F00u) >> 8u;
 
-//SUBN Vx, Vy (set Vy - Vx, set VF to 1 if Vy > Vx)
-void chip8::OP_8xy7(){}
+    registers[0xF]= registers[Vx] & 0x1u; //store least significant bit
+    registers[Vx]>>= 1; //shift 1 to the right
+}
+
+//SUBN Vx, Vy (set Vx= Vy - Vx, set VF to 1 if Vy > Vx)
+void chip8::OP_8xy7(){
+    uint8_t Vx= (opcode & 0x0F00u) >> 8u;
+    uint8_t Vy= (opcode & 0x00F0u) >> 4u;
+
+    if(registers[Vy]> registers[Vx]){
+        registers[0xF]= 1;
+    }else{
+        registers[0xF]= 0;
+    }
+
+    registers[Vx]= registers[Vy]- registers[Vx];
+}
 
 //SHL Vx (set Vx = Vx SHL 1, left non-circular shift occurs and most significant bit is stored in VF)
-void chip8::OP_8xyE(){}
+void chip8::OP_8xyE(){
+    uint8_t Vx= (opcode & 0x0F00u) >> 8u;
+
+    registers[0xF]= (registers[Vx] & 0x80u) >> 7u; //store most significant bit
+
+    registers[Vx]<<= 1; //shift 1 to the left
+}
 
 //SNE Vx, Vy (skip next instruction if Vx != Vy)
-void chip8::OP_9xy0(){}
+void chip8::OP_9xy0(){
+    uint8_t Vx= (opcode & 0x0F00u) >> 8u;
+    uint8_t Vy= (opcode & 0x00F0u) >> 4u;
+
+    if(registers[Vx]!= registers[Vy]){
+        pc+= 2;
+    }
+}
 
 //LD I, addr (set I= nnn)
 void chip8::OP_Annn(){}
