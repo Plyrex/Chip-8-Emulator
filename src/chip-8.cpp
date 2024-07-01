@@ -268,16 +268,32 @@ void chip8::OP_7xkk(){
 }
 
 //LD Vx, Vy (set Vx = Vy)
-void chip8::OP_8xy0(){}
+void chip8::OP_8xy0(){
+    uint8_t Vx= (opcode & 0x0F00u) >> 8u;
+    uint8_t Vy= (opcode & 0x00F0u) >> 4u;
+    registers[Vx]= registers[Vy];
+}
 
 //OR Vx, Vy (set Vx= Vx OR Vy)
-void chip8::OP_8xy1(){}
+void chip8::OP_8xy1(){
+    uint8_t Vx= (opcode & 0x0F00u) >> 8u;
+    uint8_t Vy= (opcode & 0x00F0u) >> 4u;
+    registers[Vx] |= registers[Vy];
+}
 
 //AND Vx, Vy (set Vx= Vx AND Vy)
-void chip8::OP_8xy2(){}
+void chip8::OP_8xy2(){
+    uint8_t Vx= (opcode & 0x0F00u) >> 8u;
+    uint8_t Vy= (opcode & 0x00F0u) >> 4u;
+    registers[Vx] &= registers[Vy];
+}
 
 //XOR Vx, Vy (set Vx= Vx XOR Vy)
-void chip8::OP_8xy3(){}
+void chip8::OP_8xy3(){
+    uint8_t Vx= (opcode & 0x0F00u) >> 8u;
+    uint8_t Vy= (opcode & 0x00F0u) >> 4u;
+    registers[Vx] ^= registers[Vy];
+}
 
 //ADD Vx, Vy (set Vx= Vx + Vy, set VF as the carry if sum is larger that 8-bits)
 void chip8::OP_8xy4(){}
