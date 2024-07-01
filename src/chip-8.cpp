@@ -366,13 +366,24 @@ void chip8::OP_9xy0(){
 }
 
 //LD I, addr (set I= nnn)
-void chip8::OP_Annn(){}
+void chip8::OP_Annn(){
+    uint8_t address= opcode & 0x0FFFu;
+    index= address;
+}
 
 //JP V0, addr (jump to nnn + V0)
-void chip8::OP_Bnnn(){}
+void chip8::OP_Bnnn(){
+    uint8_t address= opcode & 0x0FFFu;
+    pc= registers[0]+ address;
+}
 
 //RND Vx, byte (set Vx= random byte AND kk)
-void chip8::OP_Cxkk(){}
+void chip8::OP_Cxkk(){
+    uint8_t Vx= (opcode & 0x0F00u) >> 8u;
+    uint8_t byte= opcode & 0x00FFu;
+
+    registers[Vx]= randNum(rando) & byte;
+}
 
 //DRW Vx, Vy, nibble (display n-byte at location (Vx, Vy) and set VF= collision)
 void chip8::OP_Dxyn(){}
